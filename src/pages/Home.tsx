@@ -7,22 +7,38 @@ async function getData(): Promise<Payment[]> {
   return [
     {
       id: "728ed52f",
-      amount: 100,
-      status: "pending",
-      email: "m@example.com",
+      ativo: "PRIO3",
+      precoporacao: 100,
+      qtd: 0, // editavel
+      abertura: parseFloat("41.19"), // R$
+      ibov: parseFloat("1.546"), // %
+      variacao: parseFloat("1.26"),
+      variacao12m: parseFloat("-14.39"), // -14.39%
+      lotemin: 100,
+      melhorcompra: parseFloat("42.15"), // R$
+      melhorvenda: parseFloat("44.18"),
+      precototal: parseFloat("172.720"), // calc total
     },
     {
       id: "234546df",
-      amount: 200,
-      status: "pending",
-      email: "mdaf@example.com.br",
+      ativo: "HYPE3",
+      precoporacao: 200,
+      qtd: 600,
+      abertura: parseFloat("25.33"), // ...
+      ibov: parseFloat("1.525"), // %
+      variacao: parseFloat("2.89"),
+      variacao12m: parseFloat("-14.15"), // -14.39%
+      lotemin: 100,
+      melhorcompra: parseFloat("24.42"), // R$
+      melhorvenda: parseFloat("26.22"),
+      precototal: parseFloat("16.854"), // calc total
     }
     // ...
   ]
 };
 
 const Home = () => {
-    const [data, setData] = useState<any>([]);
+    const [data, setData] = useState<Payment[]>([]);
 
     async function fetchData() {
         try {

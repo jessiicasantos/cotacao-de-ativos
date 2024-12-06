@@ -1,5 +1,5 @@
 import { Disclosure, DisclosureButton, DisclosurePanel, Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react';
-import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline';
+import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
 import LogoOptions from "../assets/img/options-company-logo.png";
 import LuizProfile from "../assets/img/luis-henrique-profile.png";
 
@@ -15,7 +15,6 @@ export default function Navbar() {
   return (
     <Disclosure as="nav" className="bg-[#37776C]">
       <div className="mx-auto max-w-full">
-      {/* <div className="mx-auto max-w-full px-2 sm:px-6 lg:px-8"> */}
         <div className="relative flex h-16 items-center justify-between">
           <div className="absolute inset-y-0 left-0 flex items-center sm:hidden">
 
