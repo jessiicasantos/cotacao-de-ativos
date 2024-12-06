@@ -44,7 +44,7 @@ export default function Navbar() {
                     <img
                       alt="Options & Company"
                       src={item.img}
-                      className="h-8 w-auto"
+                      className="h-10 w-24 object-contain"
                     />
                   </Link>
                 ))}
