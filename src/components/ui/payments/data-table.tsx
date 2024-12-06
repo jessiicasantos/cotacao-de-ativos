@@ -75,7 +75,7 @@ export function DataTable<TData, TValue>({
           Cotação
         </ButtonGreen>
         <ButtonBorder className="py-2.5 px-7 flex items-center justify-center text-base">
-          <Trash  fill="#6A6A6A" stroke="white" stroke-width="1" className="mr-1 w-4 h-4" />
+          <Trash  fill="#6A6A6A" stroke="white" strokeWidth="1" className="mr-1 w-4 h-4" />
           Excluir
         </ButtonBorder>
       </div>
