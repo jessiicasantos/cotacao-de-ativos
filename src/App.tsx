@@ -1,12 +1,10 @@
 import './App.css';
-import Navbar from './components/Navbar';
-import Home from './pages/Home';
+import Layout from './components/Layout';
 
 const App = () => {
   return (
     <div className="App">
-      <Navbar />
-      <Home />
+      <Layout />
     </div>
   );
 }

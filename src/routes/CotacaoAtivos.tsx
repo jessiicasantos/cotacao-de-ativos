@@ -37,7 +37,7 @@ async function getData(): Promise<Payment[]> {
   ]
 };
 
-const Home = () => {
+const CotacaoAtivos = () => {
     const [data, setData] = useState<Payment[]>([]);
 
     async function fetchData() {
@@ -61,4 +61,4 @@ const Home = () => {
   )
 };
 
-export default Home;
+export default CotacaoAtivos;
