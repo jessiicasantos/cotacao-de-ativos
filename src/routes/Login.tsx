@@ -1,8 +1,44 @@
 import { ButtonGreen } from "../components/Buttons";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import OptionsCompany from "./../assets/img/options-company-logo.png";
+import { useState } from "react";
+import axios from "axios";
 
 export function Login() {
+  const navigate = useNavigate();
+  const [values, setValues] = useState({
+    grant_type: "password",
+    email: "",
+    password: ""
+  });
+
+  const handleSubmit = async (ev: any) => {
+    ev.preventDefault();
+
+    try {
+      const response = await axios.post("http://35.222.114.197:8000/token", {
+        grant_type: values.grant_type,
+        username: values.email,
+        password: values.password
+      }, {
+        headers: {
+          'accept': 'application/json',
+          'Content-Type': 'application/x-www-form-urlencoded'
+        }
+      });
+      
+      let dataResponse = response.data;
+
+      localStorage.setItem("access_token", response.data.access_token);
+
+      navigate("/cotacao-de-ativos");
+
+      return dataResponse;
+    } catch(error) {
+      console.error("Erroo!!", error);
+    } 
+  }
+
     return (
       <div className="h-[calc(100vh-64px)] flex flex-col lg:flex-row justify-between align-center">
         <div className="flex flex-col align-center justify-center bg-[#37776C] h-full m-auto p-3.5 md:p-12 w-full lg:w-1/2">
@@ -14,7 +50,7 @@ export function Login() {
         </div>
 
         <div className="flex flex-col align-center justify-center p-3.5 md:p-12 w-full lg:w-1/2">
-          <form action="#" method="POST" className="space-y-6 sm:w-full sm:max-w-sm sm:m-auto">
+          <form onSubmit={handleSubmit} method="POST" className="space-y-6 sm:w-full sm:max-w-sm sm:m-auto">
             <div>
                 <h2 className="pb-2 text-left text-2xl/9 font-bold text-gray-900">
                   Login
@@ -24,10 +60,11 @@ export function Login() {
                   id="email"
                   name="email"
                   type="email"
-                  required
                   autoComplete="email"
                   className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
                   placeholder="E-mail*"
+                  required
+                  onChange={(event) => setValues({...values, email: event.target.value})}
                 />
               </div>
             </div>
@@ -45,11 +82,12 @@ export function Login() {
                   id="password"
                   name="password"
                   type="password"
-                  required
                   autoComplete="current-password"
                   className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
                   placeholder="Senha*"
-                />
+                  required
+                  onChange={(event) => setValues({...values, password: event.target.value})}
+                  />
               </div>
             </div>
 
