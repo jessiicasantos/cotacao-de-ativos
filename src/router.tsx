@@ -9,7 +9,7 @@ import Protected from './components/Protected';
 
 export const router = createBrowserRouter([
     { 
-        path: "/", 
+        path: "/",
         element: <Layout />,
         children: [
             { path: "/", element: <Login /> },
@@ -23,19 +23,3 @@ export const router = createBrowserRouter([
         ]
     }
 ]);
-
-// export const router = createBrowserRouter([
-//     { path: "/", element: <Login /> },
-//     { path: "/cotacao-de-ativos", element: <CotacaoAtivos /> },
-// ]);
-
-// const AppRoutes = () => {
-//     <BrowserRouter>
-//         <Routes>
-//             <Route path="/" element={<Login />} />
-//             <Route path="cotacao-de-ativos" element={<CotacaoAtivos />} />
-//         </Routes>
-//     </BrowserRouter>
-// }
-
-// export default AppRoutes;

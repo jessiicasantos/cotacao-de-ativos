@@ -14,7 +14,7 @@ import {
 import { Checkbox } from "../checkbox";
 import { useState } from "react";
 
-export type Payment = {
+export type AtivoType = {
   id: string;
   precoporacao: number;
   qtd: number;
@@ -37,7 +37,7 @@ const InputField = ({ id, name }: any) => {
   )
 }
 
-export const columns: ColumnDef<Payment>[] = [
+export const columns: ColumnDef<AtivoType>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -200,7 +200,7 @@ export const columns: ColumnDef<Payment>[] = [
   {
     id: "actions",
     cell: ({ row }) => {
-      const payment = row.original
+      const ativo = row.original
       
       return (
         <DropdownMenu>
@@ -213,13 +213,13 @@ export const columns: ColumnDef<Payment>[] = [
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuItem
-            onClick={() => navigator.clipboard.writeText(payment.id)}
+            onClick={() => navigator.clipboard.writeText(ativo.id)}
             >
-              Copy payment ID
+              Copy ativo ID
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem>View customer</DropdownMenuItem>
-            <DropdownMenuItem>View payment details</DropdownMenuItem>
+            <DropdownMenuItem>View ativo details</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       )

@@ -2,7 +2,9 @@ import { Disclosure, DisclosureButton, DisclosurePanel, Menu, MenuButton, MenuIt
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
 import LogoOptions from "../assets/img/options-company-logo.png";
 import LuizProfile from "../assets/img/luis-henrique-profile.png";
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { JSXElementConstructor, ReactElement, ReactNode, ReactPortal, useEffect, useState } from 'react';
+import axios from 'axios';
 
 const navigation = [
   { name: '', href: '/cotacao-de-ativos', img: LogoOptions,  current: true },
@@ -12,7 +14,49 @@ function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(' ')
 }
 
+export type UserMe = {
+  username: string;
+  full_name: string;
+  email: string;
+  hashed_password: string;
+  disabled: string;
+};
+
 export default function Navbar() {
+  const token = localStorage.getItem("access_token");
+  const navigate = useNavigate();
+  const [data, setData] = useState<UserMe | null>();
+
+  const signOut = () => {
+    localStorage.removeItem('access_token');
+
+    navigate("/");
+  }
+
+  const fetchData = async () => {
+    try {
+      const response = await axios.get("http://35.222.114.197:8000/users/me", {
+        headers: {
+          'accept': 'application/json',
+          'Authorization': 'Bearer ' + token
+        }
+      });
+      console.log(localStorage.getItem("access_token"));
+      
+      let dataResponse = response.data;
+  
+      console.log(dataResponse);
+
+      setData(dataResponse);
+    } catch(error) {
+      console.error("Erroo!", error);
+    }
+  }
+
+  useEffect(() => {
+    fetchData();
+  }, [token])
+  
   return (
     <Disclosure as="nav" className="bg-[#37776C]">
       <div className="mx-auto max-w-full">
@@ -53,51 +97,69 @@ export default function Navbar() {
           </div>
           <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
             {/* Profile dropdown */}
-            <Menu as="div" className="relative ml-3 lg:mr-24">
-              <div>
-                <MenuButton className="relative flex rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800 p-2 hover:bg-gray-900 hover:text-white">
-                  <span className="absolute" />
-                  <span className="sr-only">Open user menu</span>
-                  <div className="flex items-center text-white font-normal">
-                    <img
-                      alt="Foto de perfil"
-                      src={LuizProfile}
-                      className="size-8 rounded-full mr-2"
-                    />
-                    <span>Luiz Henrique</span>
-                  </div>
-                </MenuButton>
-              </div>
-              <MenuItems
-                transition
-                className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black/5 transition focus:outline-none data-[closed]:scale-95 data-[closed]:transform data-[closed]:opacity-0 data-[enter]:duration-100 data-[leave]:duration-75 data-[enter]:ease-out data-[leave]:ease-in"
-              >
-                <MenuItem>
-                  <Link
-                    to="/"
-                    className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-200 data-[focus]:outline-none"
-                  >
-                    Your Profile
-                  </Link>
-                </MenuItem>
-                <MenuItem>
-                  <Link
-                    to="#"
-                    className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-200 data-[focus]:outline-none"
-                  >
-                    Settings
-                  </Link>
-                </MenuItem>
-                <MenuItem>
-                  <Link
-                    to="#"
-                    className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100 data-[focus]:outline-none"
-                  >
-                    Sign out
-                  </Link>
-                </MenuItem>
-              </MenuItems>
-            </Menu>
+            {localStorage.getItem("access_token") ? 
+               <Menu as="div" className="relative ml-3 lg:mr-24">
+                <div>
+                  <MenuButton className="relative flex rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800 p-2 hover:bg-gray-900 hover:text-white">
+                    <span className="absolute" />
+                    <span className="sr-only">Open user menu</span>
+                    <div className="flex items-center text-white font-normal">
+                      <img
+                        alt="Foto de perfil"
+                        src={LuizProfile}
+                        className="size-8 rounded-full mr-2"
+                      />
+                      <span>Luiz Henrique</span>
+                    </div>
+                  </MenuButton>
+                </div>
+                <MenuItems
+                  transition
+                  className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black/5 transition focus:outline-none data-[closed]:scale-95 data-[closed]:transform data-[closed]:opacity-0 data-[enter]:duration-100 data-[leave]:duration-75 data-[enter]:ease-out data-[leave]:ease-in"
+                >
+                  <MenuItem>
+                    <div>
+                      <h3 className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-200 data-[focus]:outline-none">
+                        {data && data.email}
+                      </h3>
+                      <Link
+                        to="/"
+                        className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-200 data-[focus]:outline-none"
+                      >
+                        Your Profile
+                      </Link>
+                    </div>
+                  </MenuItem>
+                  <MenuItem>
+                    <Link
+                      to="#"
+                      className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-200 data-[focus]:outline-none"
+                    >
+                      Settings
+                    </Link>
+                  </MenuItem>
+                  <MenuItem>
+                    <button
+                      className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100 data-[focus]:outline-none w-full text-left"
+                      onClick={signOut}
+                    >
+                      Sign out
+                    </button>
+                  </MenuItem>
+                </MenuItems>
+              </Menu> :
+              <Menu as="div" className="relative ml-3 lg:mr-24">
+                <div>
+                  <MenuButton className="relative flex rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2  focus:ring-offset-gray-800 p-2 hover:bg-gray-900 hover:text-white">
+                    <span className="absolute" />
+                    <span className="sr-only">Open user menu</span>
+                    <div className="flex items-center text-white font-normal">
+                      <h1>Bem-vindo!</h1>
+                    </div>
+                  </MenuButton>
+                </div>
+              </Menu>
+            } 
           </div>
         </div>
       </div>

@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import { columns, Payment } from "../components/ui/payments/columns";
-import { DataTable } from "../components/ui/payments/data-table";
+import { columns, AtivoType } from "../components/ui/ativos/columns";
+import { DataTable } from "../components/ui/ativos/data-table";
 
-async function getData(): Promise<Payment[]> {
+async function getData(): Promise<AtivoType[]> {
   // Fetch data from your API here.
   return [
     {
@@ -38,7 +38,7 @@ async function getData(): Promise<Payment[]> {
 };
 
 const CotacaoAtivos = () => {
-    const [data, setData] = useState<Payment[]>([]);
+    const [data, setData] = useState<AtivoType[]>([]);
 
     async function fetchData() {
         try {

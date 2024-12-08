@@ -29,7 +29,7 @@ export function Login() {
       
       let dataResponse = response.data;
 
-      localStorage.setItem("access_token", response.data.access_token);
+      localStorage.setItem("access_token", dataResponse.access_token);
 
       navigate("/cotacao-de-ativos");
 
