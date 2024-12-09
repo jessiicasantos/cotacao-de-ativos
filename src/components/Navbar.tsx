@@ -3,7 +3,7 @@ import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
 import LogoOptions from "../assets/img/options-company-logo.png";
 import LuizProfile from "../assets/img/luis-henrique-profile.png";
 import { Link, useNavigate } from 'react-router-dom';
-import { JSXElementConstructor, ReactElement, ReactNode, ReactPortal, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import axios from 'axios';
 
 const navigation = [
@@ -41,12 +41,9 @@ export default function Navbar() {
           'Authorization': 'Bearer ' + token
         }
       });
-      console.log(localStorage.getItem("access_token"));
       
       let dataResponse = response.data;
   
-      console.log(dataResponse);
-
       setData(dataResponse);
     } catch(error) {
       console.error("Erroo!", error);
@@ -119,24 +116,10 @@ export default function Navbar() {
                 >
                   <MenuItem>
                     <div>
-                      <h3 className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-200 data-[focus]:outline-none">
+                      <button className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-200 data-[focus]:outline-none">
                         {data && data.email}
-                      </h3>
-                      <Link
-                        to="/"
-                        className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-200 data-[focus]:outline-none"
-                      >
-                        Your Profile
-                      </Link>
+                      </button>
                     </div>
-                  </MenuItem>
-                  <MenuItem>
-                    <Link
-                      to="#"
-                      className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-200 data-[focus]:outline-none"
-                    >
-                      Settings
-                    </Link>
                   </MenuItem>
                   <MenuItem>
                     <button

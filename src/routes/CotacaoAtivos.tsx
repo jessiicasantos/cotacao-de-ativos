@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { columns, AtivoType } from "../components/ui/ativos/columns";
 import { DataTable } from "../components/ui/ativos/data-table";
+import WebsocketsDemo from "../components/WebsocketsDemo";
 
 async function getData(): Promise<AtivoType[]> {
   // Fetch data from your API here.
@@ -57,6 +58,11 @@ const CotacaoAtivos = () => {
   return (
     <>
       <DataTable columns={columns} data={data} />
+
+      <div>
+        testando websockets
+        <WebsocketsDemo />
+      </div>
     </>
   )
 };
