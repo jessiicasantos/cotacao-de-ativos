@@ -1,39 +1,25 @@
 import { useEffect, useState } from "react";
 import { columns, AtivoType } from "../components/ui/ativos/columns";
 import { DataTable } from "../components/ui/ativos/data-table";
-import WebsocketsDemo from "../components/WebsocketsDemo";
+import useSocket from "../hooks/useSocket";
 
 async function getData(): Promise<AtivoType[]> {
   // Fetch data from your API here.
   return [
     {
-      id: "728ed52f",
-      ativo: "PRIO3",
-      precoporacao: 100,
-      qtd: 0, // editavel
-      abertura: parseFloat("41.19"), // R$
-      ibov: parseFloat("1.546"), // %
-      variacao: parseFloat("1.26"),
-      variacao12m: parseFloat("-14.39"), // -14.39%
-      lotemin: 100,
-      melhorcompra: parseFloat("42.15"), // R$
-      melhorvenda: parseFloat("44.18"),
-      precototal: parseFloat("172.720"), // calc total
+      id: "0",
+      ativo: "",
+      precoporacao: 0,
+      qtd: 1, // editavel
+      abertura: parseFloat("0"), // R$
+      ibov: parseFloat("0"), // %
+      variacao: parseFloat("0"),
+      variacao12m: parseFloat("0"), // -num%
+      lotemin: 0,
+      melhorcompra: parseFloat("0"), // R$
+      melhorvenda: parseFloat("0"),
+      precototal: parseFloat("0"), // calc total
     },
-    {
-      id: "234546df",
-      ativo: "HYPE3",
-      precoporacao: 200,
-      qtd: 600,
-      abertura: parseFloat("25.33"), // ...
-      ibov: parseFloat("1.525"), // %
-      variacao: parseFloat("2.89"),
-      variacao12m: parseFloat("-14.15"), // -14.39%
-      lotemin: 100,
-      melhorcompra: parseFloat("24.42"), // R$
-      melhorvenda: parseFloat("26.22"),
-      precototal: parseFloat("16.854"), // calc total
-    }
     // ...
   ]
 };
@@ -42,27 +28,53 @@ const CotacaoAtivos = () => {
     const [data, setData] = useState<AtivoType[]>([]);
 
     async function fetchData() {
-        try {
-          let response = await getData();
+      try {
+        let response = await getData();
 
-          setData(response);
-        } catch(error) {
-            console.error(`Errooo!!!\n ${error}`)
-        }
+        setData(response);
+      } catch(error) {
+          console.error(`Errooo!!!\n ${error}`)
+      }
     }
 
+    const onMessage = (event: any) => {
+      let eventData = JSON.parse(event.data);
+      let rowIndex = data.findIndex((item: any) => item.ativo == eventData.ticker);
+
+      if (rowIndex !== -1) {
+        const newData = [...data];
+
+        const newRow: AtivoType = {
+          id: eventData.ticker,
+          ativo: eventData.ticker,
+          precoporacao: eventData.preco,
+          qtd: data[rowIndex].qtd,
+          abertura: eventData.preco_abertura,
+          ibov: eventData.ibov,
+          variacao: eventData.variacao,
+          variacao12m: eventData.variacao_12m,
+          lotemin: eventData.lote_minimo,
+          melhorcompra: eventData.compra,
+          melhorvenda: eventData.venda,
+          precototal: data[rowIndex].qtd * eventData.preco,
+        };
+    
+        newData[rowIndex] = newRow;
+  
+        console.log(newData)
+        setData(newData);
+      }
+    }
+
+    let socket = useSocket(onMessage);
+    
     useEffect(() => {
         fetchData()
     }, []);
 
   return (
     <>
-      <DataTable columns={columns} data={data} />
-
-      <div>
-        testando websockets
-        <WebsocketsDemo />
-      </div>
+      <DataTable columns={columns} data={data} setData={setData} />
     </>
   )
 };

@@ -13,6 +13,7 @@ import {
 } from "../dropdown-menu";
 import { Checkbox } from "../checkbox";
 import { useState } from "react";
+import useSocket from "../../../hooks/useSocket";
 
 export type AtivoType = {
   id: string;
@@ -29,11 +30,45 @@ export type AtivoType = {
   ativo: string;
 };
 
-const InputField = ({ id, name }: any) => {
-  const [value, setValue] = useState<string>();
+
+
+const InputAtivo = ({ value, updateData, ...props }: any) => {
+  const { sendMessage } = useSocket();
+  const [internalValue, setInternalValue] = useState<string>(value);
+
+  const handleChange = (e: any) => {
+    setInternalValue(e.target.value);
+    updateData(e.target.value);
+    console.log(internalValue);
+  }
+
+  const blurChange = (e: any) => {
+    if(internalValue) {
+      sendMessage(`sqt ${internalValue}`, false)
+    }
+    console.log('blurChange internalValue: ', internalValue);
+  }
 
   return (
-    <input type="text" id={id} name={name} value={value} onChange={e => setValue(e.target.value)} className="p-3 h-[90%] w-[90%]" />
+    <input type="text" value={internalValue} 
+      onChange={handleChange}
+      onBlur={blurChange} 
+      className="p-3 h-[90%] w-[90%] text-center font-medium border-2 border-slate-300" 
+      {...props}  
+    />
+  )
+}
+
+const InputField = ({ value, updateData, ...props }: any) => {
+  const [internalValue, setInternalValue] = useState<string>(value);
+
+  const handleChange = (e: any) => {
+    setInternalValue(e.target.value);
+    updateData(e.target.value);
+  }
+
+  return (
+    <input type="text" value={internalValue} onChange={handleChange} className="p-3 h-[90%] w-[90%] text-center font-medium border-2 border-slate-300" {...props}  />
   )
 }
 
@@ -41,7 +76,7 @@ export const columns: ColumnDef<AtivoType>[] = [
   {
     id: "select",
     header: ({ table }) => (
-      <div className="text-left">
+      <div className="text-left w-[50px]">
         <Checkbox
           checked={
             table.getIsAllPageRowsSelected() ||
@@ -69,10 +104,10 @@ export const columns: ColumnDef<AtivoType>[] = [
     accessorKey: "ativo",
     header: ({ column }) => {
       return (
-        <div className="text-center">
+        <div className="text-center w-[200px]">
           <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
             Ativo
             <ArrowUpDown className="ml-2 h-4 w-4" />
@@ -80,11 +115,11 @@ export const columns: ColumnDef<AtivoType>[] = [
         </div>
       )
     },
-    cell: ({ row }) => {
-      const ativo: string = row.getValue("ativo");
+    cell: ({ getValue, row: { index }, column: { id }, table }) => {
+      const updateData = (value: any) => table.options.meta?.updateData(index, id, value);
       return (
-        <div className="">
-          <InputField id="ativofield" name="ativofield" />
+        <div className="m-auto">
+          <InputAtivo id="ativofield" name="ativofield" value={getValue} updateData={updateData} />
         </div>
       )
     }
@@ -98,20 +133,19 @@ export const columns: ColumnDef<AtivoType>[] = [
         style: "currency",
         currency: "BRL",
       }).format(precoporacao)
-      
       return <div className="text-center font-medium">{formatted}</div>
     },
   },
   {
     accessorKey: "qtd",
     header: () => <div className="text-center">Quantidade</div>,
-    cell: ({ row }) => {
-      const qtd: string = row.getValue("qtd");
+    cell: ({ getValue, row: { index }, column: { id }, table }) => {
+      const updateData = (value: any) => table.options.meta?.updateData(index, id, value);
       return (
         <div className="">
-          <InputField id="qtdfield" name="qtdfield" />
+          <InputField id="qtdfield" name="qtdfield"  value={getValue} updateData={updateData} />
         </div>
-      )
+      );
     }
   },
   {
@@ -131,32 +165,43 @@ export const columns: ColumnDef<AtivoType>[] = [
     accessorKey: "ibov",
     header: () => <div className="text-center">IBOV %</div>,
     cell: ({ row }) => {
-      const ibov = parseFloat(row.getValue("ibov"))
+      const formatter = new Intl.NumberFormat('pt-BR', { style: 'percent', minimumFractionDigits: 2});
+      const ibov = formatter.format(row.getValue("ibov"))
       
-      return <div className="text-center font-medium">{ibov}%</div>
+      return <div className="text-center font-medium">{ibov}</div>
     },
   },
   {
     accessorKey: "variacao",
     header: () => <div className="text-center">Variação (%)</div>,
     cell: ({ row }) => {
-      const variacao = parseFloat(row.getValue("variacao"))
+      const formatter = new Intl.NumberFormat('pt-BR', { style: 'percent', minimumFractionDigits: 2});
+      const variacao = formatter.format(row.getValue("variacao"))
       
-      return <div className="text-center font-medium">{variacao}%</div>
+      return <div className="text-center font-medium">{variacao}</div>
     },
   },
   {
     accessorKey: "variacao12m",
     header: () => <div className="text-center">Variação 12m (%)</div>,
     cell: ({ row }) => {
-      const variacao12m = parseFloat(row.getValue("variacao12m"))
+      const formatter = new Intl.NumberFormat('pt-BR', { style: 'percent', minimumFractionDigits: 2});
+      const variacao12m = formatter.format(row.getValue("variacao12m"))
       
-      return <div className="text-center font-medium">{variacao12m}%</div>
+      return <div className="text-center font-medium">{variacao12m}</div>
     },
   },
   {
     accessorKey: "lotemin",
-    header: () => <div className="text-center">Lote mínimo</div>,
+    header: () => <div className="text-center font-medium">Lote mínimo</div>,
+    cell: ({ row }) => {
+      const formatter = new Intl.NumberFormat('pt-BR', { maximumSignificantDigits: 3 }).format(
+        row.getValue("lotemin")
+      );
+      const lotemin = formatter;
+      
+      return <div className="text-center font-medium">{lotemin}</div>
+    },
   },
   {
     accessorKey: "melhorcompra",
